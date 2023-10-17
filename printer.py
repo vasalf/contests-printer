@@ -57,7 +57,7 @@ def table_header(max_letter):
 
 
 def problem_link(d, f):
-    return f'<a href="/{d.name}/{f.name}">{f.name}</a>'
+    return f'<a href="{path_prefix}/{d.name}/{f.name}">{f.name}</a>'
 
 
 def table_body(contests, max_letter):
@@ -110,10 +110,12 @@ def html_body(contests):
 def load_config():
     global contests_root
     global users
+    global path_prefix
     with open('/etc/contests-printer/config.json') as fin:
         config = json.load(fin)
         contests_root = config['contests_root']
         users = config['users']
+        path_prefix = config['path_prefix']
 
 
 load_config()
@@ -125,7 +127,7 @@ def verify_password(username, password):
         return username
 
 
-@app.route("/")
+@app.route(path_prefix)
 @auth.login_required
 def root():
     contests = load_contests(contests_root)
@@ -137,7 +139,7 @@ def root():
     return answer
 
 
-@app.route("/<contest_name>/<filename>")
+@app.route(f"{path_prefix}<contest_name>/<filename>")
 @auth.login_required
 def get(contest_name, filename):
     contests = load_contests(contests_root)
